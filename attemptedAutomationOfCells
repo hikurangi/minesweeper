@@ -1,0 +1,10 @@
+var boardSize = 10;
+var printOutput = "";
+var makeShitHappen = function () {
+for (i=1; i=boardSize; i++) {
+printOutput += ("cell" + i " = {row: " + i + ", column: " + i + "}")
+}
+}
+
+makeShitHappen();
+console.log(printOutput);
