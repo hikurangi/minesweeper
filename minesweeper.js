@@ -46,58 +46,35 @@ function startGame () {
 // 1. Are all of the cells that are NOT mines visible?
 // 2. Are all of the mines marked?
 
-
-// var mineCounter = board.cells.filter(function (obj) {
-//   return obj.isMine == true;
-// });
-// var flaggedMineCounter = 0
-
-// Declare checkForWin variables outside of loops or commonly-repeated functions
-var mineIdentifier = board.cells.filter(function (obj) {
-  return obj.isMine == true;
-});
-
-var markedMineCounter = board.cells.filter(function (obj) {
-  return obj.markedMine == true;
-});
-
-var hiddenCellCounter = board.cells.filter(function (obj) {
-  return obj.hidden == true;
-});
-
-//the other other idea: add a property which marks marked mines, Mark.
-
 function checkForWin () {
-  // I think I get the instructions this time...
-  // for (var k = 0; k<board.cells.length; k++) {
-  //   if ((board.cells.isMine = true) && (board.cells.isMarked = true)) {
-  //     console.log("Marked Mine #" + k);
-  //   } else {
-  //     return
-  //   }
-  // }
-  //declare variables outside of for loop, but within its scope so this code is run only when checkForWin is activated
-  var markedMineCounter = board.cells.filter(function (obj) {
+  // 1. loop through all mines and a) if there is an unmarked mine, return. else b) add .markedMine property to accurately marked mines
+      for (var k = 0; k<board.cells.length; k++) {
+        if ((board.cells[k].isMine == true) && (board.cells[k].isMarked == false)) {
+          // easy - if the for loop ever comes across a cell which is a mine and is not marked, then boot us out of the win condition
+          return
+        } else if ((board.cells[k].isMine == true) && (board.cells[k].isMarked == true)) {
+        board.cells[k].markedMine = true;
+      }
+    }
+  // build an array of all the cells which are accurately marked mines
+  var countMarkedMinesProp = board.cells.filter(function (obj) {
     return obj.markedMine == true;
   });
 
-  var hiddenCellCounter = board.cells.filter(function (obj) {
-    return obj.hidden == true;
+  // array of all cells with mines, regardless of whether they're hidden or not
+  var mineIdentifier = board.cells.filter(function (obj) {
+    return obj.isMine == true;
   });
-  //
-  for (var k = 0; k<board.cells.length; k++) {
-    if ((board.cells[k].isMine = true) && (board.cells[k].isMarked = true)) {
-      board.cells[k].markedMine = true;
-      for (var l = 0; l<board.cells.length; l++) {
-        if ((mineIdentifier.length = markedMineCounter.length) && (hiddenCellCounter.length = 0)) {
-          lib.displayMessage('You win!')
-        }
-      }
-    }
+
+  // array of cells which are both hidden and mineless
+  var hiddenCellCounter = board.cells.filter(function (obj) {
+    return ((obj.hidden == true) && (obj.isMine == false));
+  });
+
+  // if the number of accurately marked mines and the number of mines which exist in the board are the same, AND there are no hidden cells which don't have mines, display the win message!
+  if ((countMarkedMinesProp.length == mineIdentifier.length) && (hiddenCellCounter.length == 0)) {
+    lib.displayMessage('You win!');
   }
-// You can use this function call to declare a winner (once you've
-// detected that they've won, that is!)
-//   lib.displayMessage('You win!')
 }
 
 // Define this function to count the number of mines around the cell
@@ -108,20 +85,21 @@ function checkForWin () {
 //
 // It will return cell objects in an array. You should loop through
 // them, counting the number of times `cell.isMine` is true.
-function countSurroundingMines (cell) {
-  var surroundingCells = lib.getSurroundingCells(cell.row, cell.col)
-//   var surroundingCells = getSurroundingCells(cell.row, cell.col);
-//   var count = 0;
-//   for (var j=0; j<surroundingCells.length; j++) {
-//     if (surroundingCells[j].isMine = true) {
-//       count ++
-//     }
-//   }
-//   return count
 
-//filter method somehow works!?
-  var cellsWithMines = surroundingCells.filter(function (obj) {
-    return obj.isMine == true;
-  });
-  return cellsWithMines.length;
+// for loop method
+function countSurroundingMines (cell) {
+  var surroundingCells = getSurroundingCells(cell.row, cell.col)
+  var count = 0;
+  for (var j=0; j<surroundingCells.length; j++) {
+    if (surroundingCells[j].isMine == true) {
+      count ++
+    }
+  }
+  return count
+
+// filter method also works.
+//   var cellsWithMines = surroundingCells.filter(function (obj) {
+//     return obj.isMine == true;
+//   });
+//   return cellsWithMines.length;
 }
